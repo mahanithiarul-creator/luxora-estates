@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#020509" />
+      <stop offset="100%" stop-color="#06172f" />
+    </linearGradient>
+    <linearGradient id="shine" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#35d7ff" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#7cc7ff" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <path d="M80 520 Q420 250 760 520 T1120 520" fill="none" stroke="#1b75ff" stroke-width="14" stroke-linecap="round" opacity="0.28" />
+  <circle cx="820" cy="220" r="110" fill="#0bf" opacity="0.18" />
+  <circle cx="360" cy="170" r="140" fill="#6ac5ff" opacity="0.12" />
+  <rect x="120" y="120" width="540" height="360" rx="48" ry="48" fill="rgba(255,255,255,0.04)" stroke="#4dcfff" stroke-width="2" />
+  <rect x="680" y="220" width="380" height="240" rx="28" ry="28" fill="rgba(255,255,255,0.05)" />
+  <rect x="100" y="460" width="340" height="36" rx="18" ry="18" fill="#0bf" opacity="0.16" />
+  <rect x="100" y="510" width="220" height="18" rx="9" ry="9" fill="#0bf" opacity="0.12" />
+  <text x="120" y="215" fill="#ffffff" font-family="Inter, sans-serif" font-size="64" font-weight="800">LUXORA ESTATES</text>
+  <text x="120" y="295" fill="#93c5fd" font-family="Inter, sans-serif" font-size="28">Cinematic luxury real estate for investors and portfolios.</text>
+  <path d="M120 340 H520" stroke="#35d7ff" stroke-width="4" opacity="0.55" />
+  <path d="M760 120 L1080 120 L1080 420 L760 420 Z" fill="url(#shine)" />
+</svg>

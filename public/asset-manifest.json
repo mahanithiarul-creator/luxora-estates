@@ -1,0 +1,32 @@
+{
+  "assets": [
+    {
+      "id": "box_textured_glb",
+      "path": "/models/box_textured.glb",
+      "type": "gltf",
+      "recommended_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/BoxTextured/glTF-Binary/BoxTextured.glb",
+      "notes": "Architectural accent GLB for cinematic hero and gallery scenes."
+    },
+    {
+      "id": "lantern_glb",
+      "path": "/models/lantern.glb",
+      "type": "gltf",
+      "recommended_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Lantern/glTF-Binary/Lantern.glb",
+      "notes": "Ambient decorative GLB for premium scene accents."
+    },
+    {
+      "id": "avocado_glb",
+      "path": "/models/avocado.glb",
+      "type": "gltf",
+      "recommended_url": "https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Avocado/glTF-Binary/Avocado.glb",
+      "notes": "Luxury sculpture GLB for interactive showcases."
+    },
+    {
+      "id": "city_hdr",
+      "path": "/hdr/city.hdr",
+      "type": "hdr",
+      "recommended_url": "https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/royal_esplanade_1k.hdr",
+      "notes": "Royal Esplanade cinematic HDR environment."
+    }
+  ]
+}

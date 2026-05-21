@@ -1,9 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabaseAdmin } from '../../../lib/supabaseAdminClient';
+import { supabaseAdmin, supabaseAdminReady } from '../../../lib/supabaseAdminClient';
 
 async function getUserIdFromHeader(req: NextApiRequest) {
   const token = req.headers.authorization?.split(' ')[1] || null;
-  if (!token) return null;
+  if (!token || !supabaseAdminReady || !supabaseAdmin) return null;
 
   const { data, error } = await supabaseAdmin.auth.getUser(token);
   if (error || !data.user) return null;
@@ -12,6 +12,28 @@ async function getUserIdFromHeader(req: NextApiRequest) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (!supabaseAdminReady || !supabaseAdmin) {
+    if (req.method === 'GET') {
+      return res.status(200).json({ data: [] });
+    }
+
+    if (req.method === 'POST') {
+      const { propertyId } = req.body;
+      if (!propertyId) {
+        return res.status(400).json({ error: 'Missing propertyId in request body' });
+      }
+
+      return res.status(201).json({ data: [{ id: `mock-favorite-${Date.now()}`, property_id: propertyId, user_id: 'guest' }] });
+    }
+
+    if (req.method === 'DELETE') {
+      return res.status(200).json({ data: [] });
+    }
+
+    res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
+    return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+
   const userId = await getUserIdFromHeader(req);
   if (!userId) {
     return res.status(401).json({ error: 'Unauthorized' });
@@ -67,6 +89,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json({ data });
   }
 
-  res.setHeader('Allow', ['GET', 'POST']);
+  res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
   return res.status(405).end(`Method ${req.method} Not Allowed`);
 }

@@ -109,7 +109,7 @@ export default function PropertyDetails() {
   }, [id]);
 
   useEffect(() => {
-    if (!property?.id) return;
+    if (!property?.id || typeof window === 'undefined') return;
     try {
       const saved = JSON.parse(window.localStorage.getItem('luxora_recently_viewed') || '[]');
       const updated = [{ id: property.id, title: property.title, location: property.location, image: property.image }, ...saved.filter((item: any) => item.id !== property.id)].slice(0, 6);
@@ -120,7 +120,7 @@ export default function PropertyDetails() {
   }, [property]);
 
   useEffect(() => {
-    if (!focusInquiry) return;
+    if (!focusInquiry || typeof document === 'undefined') return;
     const inquirySection = document.getElementById('inquiry-section');
     if (inquirySection) {
       inquirySection.scrollIntoView({ behavior: 'smooth', block: 'start' });

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabaseAdmin } from '../../lib/supabaseAdminClient';
+import { supabaseAdmin, supabaseAdminReady } from '../../lib/supabaseAdminClient';
+import sample from '../../lib/sample-data';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -8,6 +9,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const { q, featured } = req.query;
+
+  if (!supabaseAdminReady || !supabaseAdmin) {
+    const query = sample.properties.slice(0, 18);
+    const filtered = typeof q === 'string'
+      ? query.filter((item) => item.title.toLowerCase().includes(q.toLowerCase()) || item.location.toLowerCase().includes(q.toLowerCase()))
+      : query;
+
+    return res.status(200).json({ data: filtered });
+  }
+
   let query = supabaseAdmin.from('properties').select('id,title,location,price,image,bedrooms,bathrooms,area,category,featured,short_description');
 
   if (featured === 'true') {

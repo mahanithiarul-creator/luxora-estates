@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabaseAdmin } from '../../lib/supabaseAdminClient';
+import { supabaseAdmin, supabaseAdminReady } from '../../lib/supabaseAdminClient';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -8,13 +8,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const token = req.headers.authorization?.split(' ')[1] || null;
-  const userResponse = token ? await supabaseAdmin.auth.getUser(token) : null;
-  const userId = userResponse?.data.user?.id ?? null;
+  const userId = supabaseAdminReady && supabaseAdmin && token
+    ? (await supabaseAdmin.auth.getUser(token)).data.user?.id ?? null
+    : null;
 
   const { propertyId, name, email, phone, date, message } = req.body;
 
   if (!propertyId || !email || !date) {
     return res.status(400).json({ error: 'propertyId, email, and date are required' });
+  }
+
+  if (!supabaseAdminReady || !supabaseAdmin) {
+    const created = {
+      id: `mock-booking-${Date.now()}`,
+      property_id: propertyId,
+      user_id: userId,
+      name,
+      email,
+      phone,
+      booking_date: date,
+      message,
+      status: 'pending',
+      created_at: new Date().toISOString(),
+    };
+
+    return res.status(201).json({ data: [created] });
   }
 
   const { data, error } = await supabaseAdmin.from('bookings').insert([

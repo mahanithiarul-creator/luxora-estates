@@ -15,3 +15,5 @@ export const supabaseAdmin = supabaseUrl && supabaseServiceRoleKey
       },
     })
   : null;
+
+export const supabaseAdminReady = Boolean(supabaseAdmin);

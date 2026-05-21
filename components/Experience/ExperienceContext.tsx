@@ -46,6 +46,9 @@ export function ExperienceProvider({ children }: { children: React.ReactNode }) 
   const showToast = (toast: Omit<ToastPayload, 'id'>) => {
     const id = Date.now();
     setToasts((current) => [...current, { ...toast, id }]);
+
+    if (typeof window === 'undefined') return;
+
     window.setTimeout(() => {
       setToasts((current) => current.filter((item) => item.id !== id));
     }, 4200);

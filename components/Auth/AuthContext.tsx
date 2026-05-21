@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { Session, User } from '@supabase/supabase-js';
-import { supabase } from '../../lib/supabaseClient';
+import { supabase, supabaseReady } from '../../lib/supabaseClient';
 
 type AuthContextType = {
   user: User | null;
@@ -21,7 +21,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+
     async function loadSession() {
+      if (!supabaseReady || !supabase) {
+        if (mounted) setLoading(false);
+        return;
+      }
+
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -33,30 +39,43 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     loadSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, updatedSession) => {
-      setSession(updatedSession);
-      setUser(updatedSession?.user ?? null);
-      setLoading(false);
-    });
+    const authListener = supabaseReady && supabase
+      ? supabase.auth.onAuthStateChange((_event, updatedSession) => {
+          if (!mounted) return;
+          setSession(updatedSession);
+          setUser(updatedSession?.user ?? null);
+          setLoading(false);
+        })
+      : null;
 
     return () => {
       mounted = false;
-      authListener.subscription.unsubscribe();
+      if (authListener && 'data' in authListener) {
+        authListener.data.subscription.unsubscribe();
+      }
     };
   }, []);
 
   const signInWithGoogle = async () => {
+    if (!supabaseReady || !supabase) return;
     setLoading(true);
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: `${window.location.origin}/properties`,
-      },
-    });
-    setLoading(false);
+    try {
+      await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: typeof window !== 'undefined' ? `${window.location.origin}/properties` : undefined,
+        },
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signInWithEmail = async (email: string, password: string) => {
+    if (!supabaseReady || !supabase) {
+      return { error: 'Authentication is currently unavailable' };
+    }
+
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({
       email,
@@ -67,12 +86,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signUpWithEmail = async (email: string, password: string) => {
+    if (!supabaseReady || !supabase) {
+      return { error: 'Authentication is currently unavailable' };
+    }
+
     setLoading(true);
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/properties`,
+        emailRedirectTo: typeof window !== 'undefined' ? `${window.location.origin}/properties` : undefined,
       },
     });
     setLoading(false);
@@ -80,6 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
+    if (!supabaseReady || !supabase) return;
     setLoading(true);
     await supabase.auth.signOut();
     setLoading(false);

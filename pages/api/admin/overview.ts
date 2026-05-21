@@ -1,10 +1,22 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { supabaseAdmin } from '../../../lib/supabaseAdminClient';
+import { supabaseAdmin, supabaseAdminReady } from '../../../lib/supabaseAdminClient';
+import sample from '../../../lib/sample-data';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', ['GET']);
     return res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+
+  if (!supabaseAdminReady || !supabaseAdmin) {
+    return res.status(200).json({
+      bookings: 0,
+      inquiries: 0,
+      properties: sample.properties.length,
+      favorites: 0,
+      recentInquiries: [],
+      recentBookings: [],
+    });
   }
 
   const [{ count: bookingCount, error: bookingError }, { count: inquiryCount, error: inquiryError }, { count: propertyCount, error: propertyError }, { count: favoriteCount, error: favoriteError }] = await Promise.all([
